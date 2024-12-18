@@ -102,12 +102,12 @@ export default function Home() {
                 <div className="flex items-center space-x-4">
                   <MapIcon className="w-6 h-6 text-blue-500" />
                   <div>
-                    <h2 className="text-sm font-medium">{device.id}</h2>
-                    <p className="text-xs text-gray-500">{device.message}</p>
-                    <p className="text-xs text-gray-500">{device.ipadress}</p>
-                    <p className="text-xs text-gray-500">{device.deviceid}</p>
+                    <h2 className="text-xm font-medium">{device.number}</h2>
+                    <p className="text-sm text-gray-700">{device.message}</p>
+                    <p className="text-xs text-gray-500">ip: {device.ipaddress}</p>
+                    <p className="text-xs text-gray-500">identifiant: {device.deviceid}</p>
                     <p className="text-xs text-gray-500">
-                      {new Date(device.createtime).toLocaleString()}
+                      {device.createtime}
                     </p>
                   </div>
                 </div>
