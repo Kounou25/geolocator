@@ -1,10 +1,10 @@
 import { Pool } from 'pg';
 
 const pool = new Pool({
-  user: 'root', // Votre utilisateur PostgreSQL
+  user: 'goliat', // Votre utilisateur PostgreSQL
   host: 'localhost', // L'hôte de votre serveur PostgreSQL
   database: 'hmdm', // Le nom de votre base de données
-  password: '', // Laissez vide si votre base de données n'a pas de mot de passe
+  password: 'goliat@predator', // Laissez vide si votre base de données n'a pas de mot de passe
   port: 5432, // Port par défaut de PostgreSQL
 });
 
