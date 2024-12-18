@@ -37,7 +37,7 @@ export default function Home() {
   }, []);
 
   const filteredDevices = devices.filter((device) =>
-    device.message.toLowerCase().includes(search.toLowerCase())
+    device.number.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -53,7 +53,7 @@ export default function Home() {
         } shadow-md`}
       >
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <img src="img/logo.png" alt="Mobigate" className="h-8" />
+          <img src="/favicon.ico" alt="Mobigate Geolocator" className="h-8" />
           <button
             onClick={() => setDarkMode(!darkMode)}
             className="p-2 rounded-full hover:bg-gray-200 transition-colors"
@@ -92,7 +92,7 @@ export default function Home() {
           <ul className="space-y-3">
             {filteredDevices.map((device) => (
               <li
-                key={device.id}
+                key={device.number}
                 className={`flex items-center justify-between p-3 rounded-lg shadow-sm border ${
                   darkMode
                     ? 'bg-gray-800 border-gray-700'
