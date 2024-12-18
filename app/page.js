@@ -53,7 +53,7 @@ export default function Home() {
         } shadow-md`}
       >
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <img src="/logo.png" alt="Mobigate" className="h-8" />
+          <img src="img/logo.png" alt="Mobigate" className="h-8" />
           <button
             onClick={() => setDarkMode(!darkMode)}
             className="p-2 rounded-full hover:bg-gray-200 transition-colors"
@@ -102,8 +102,13 @@ export default function Home() {
                 <div className="flex items-center space-x-4">
                   <MapIcon className="w-6 h-6 text-blue-500" />
                   <div>
-                    <h2 className="text-sm font-medium">{device.deviceid}</h2>
+                    <h2 className="text-sm font-medium">{device.id}</h2>
                     <p className="text-xs text-gray-500">{device.message}</p>
+                    <p className="text-xs text-gray-500">{device.ipadress}</p>
+                    <p className="text-xs text-gray-500">{device.deviceid}</p>
+                    <p className="text-xs text-gray-500">
+                      {new Date(device.createtime).toLocaleString()}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-4">
