@@ -1,81 +1,72 @@
 'use client';
 
-import { useState } from 'react';
-import { SearchIcon, SunIcon, MoonIcon } from '@heroicons/react/outline';
+import { useEffect, useState } from 'react';
+import { LocationMarkerIcon, EyeIcon } from '@heroicons/react/outline';
 
 export default function Home() {
-  const [search, setSearch] = useState('');
-  const [darkMode, setDarkMode] = useState(false);
+  const [logs, setLogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Données fictives des appareils
-  const devices = [
-    { id: 1, name: 'Appareil A', status: 'En ligne', location: '12.9716° N, 77.5946° E' },
-    { id: 2, name: 'Appareil B', status: 'Hors ligne', location: '13.0827° N, 80.2707° E' },
-    { id: 3, name: 'Appareil C', status: 'En ligne', location: '28.7041° N, 77.1025° E' },
-  ];
+  useEffect(() => {
+    async function fetchLogs() {
+      try {
+        const response = await fetch('/api/devices'); // Assurez-vous que l'API est bien à ce chemin
+        if (!response.ok) {
+          throw new Error('Erreur lors de la récupération des données');
+        }
+        const data = await response.json();
+        setLogs(data);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    }
 
-  const filteredDevices = devices.filter(device =>
-    device.name.toLowerCase().includes(search.toLowerCase())
-  );
+    fetchLogs();
+  }, []);
 
   return (
-    <div className={`min-h-screen flex flex-col ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
-      {/* Header */}
-      <header className={`sticky top-0 z-10 ${darkMode ? 'bg-gray-800' : 'bg-white'} shadow-md`}>
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <img src="/logo.png" alt="Mobigate" className="h-8" />
-          <button
-            onClick={() => setDarkMode(!darkMode)}
-            className="p-2 rounded-full hover:bg-gray-200 transition-colors"
-          >
-            {darkMode ? (
-              <SunIcon className="w-6 h-6 text-yellow-500" />
-            ) : (
-              <MoonIcon className="w-6 h-6 text-gray-800" />
-            )}
-          </button>
+    <div className="min-h-screen bg-gray-100 text-gray-900 flex flex-col">
+      <header className="bg-white shadow-md p-4">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <h1 className="text-xl font-semibold">Device Logs</h1>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="p-6 flex-grow">
-        {/* Search Bar */}
-        <div className="flex mb-6 items-center">
-          <div className="relative w-full md:w-1/2">
-            <input
-              type="text"
-              placeholder="Rechercher un appareil..."
-              className="w-full p-4 rounded-lg bg-gray-100 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <SearchIcon className="absolute top-3 right-4 text-gray-400 w-5 h-5" />
-          </div>
-        </div>
-
-        {/* Device List */}
-        <ul className="divide-y divide-gray-200">
-          {filteredDevices.map((device) => (
-            <li key={device.id} className="py-4 flex justify-between items-center">
-              <div>
-                <h2 className="text-lg font-medium">{device.name}</h2>
-                <p className="text-sm text-gray-500">{device.location}</p>
-              </div>
-              <span
-                className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                  device.status === 'En ligne' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                }`}
+      <main className="flex-grow max-w-7xl mx-auto p-4">
+        {loading ? (
+          <p className="text-center text-gray-600">Chargement des données...</p>
+        ) : error ? (
+          <p className="text-center text-red-500">{error}</p>
+        ) : (
+          <ul className="space-y-4">
+            {logs.map((log) => (
+              <li
+                key={log.id}
+                className="bg-white shadow rounded-lg p-4 flex justify-between items-center"
               >
-                {device.status}
-              </span>
-            </li>
-          ))}
-        </ul>
+                <div>
+                  <h2 className="text-sm font-semibold text-gray-700">{log.message}</h2>
+                  <p className="text-xs text-gray-500 mt-1">
+                    ID: {log.deviceid} - <span>{log.createtime}</span>
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    IP: {log.ipaddress} - Gravité: {log.severity}
+                  </p>
+                </div>
+                <button className="text-blue-500 hover:text-blue-600">
+                  <EyeIcon className="w-5 h-5" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
       </main>
 
-      {/* Footer */}
-      <footer className={`py-4 mt-auto text-center text-sm ${darkMode ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-600'}`}>
-        <p>&copy; 2024 Mobigate. Tous droits réservés.</p>
+      <footer className="bg-gray-200 text-gray-600 text-center py-4">
+        &copy; 2024 Mobigate. Tous droits réservés.
       </footer>
     </div>
   );
