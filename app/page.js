@@ -16,6 +16,21 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Fonction pour extraire latitude et longitude depuis le message
+  function parseCoordinates(message) {
+    const regex = /lat=([+-]?\d+\.\d+),\s*lon=([+-]?\d+\.\d+)/;
+    const match = message.match(regex);
+
+    if (match) {
+      const latitude = parseFloat(match[1]); // Extraction et conversion de la latitude
+      const longitude = parseFloat(match[2]); // Extraction et conversion de la longitude
+      return { latitude, longitude };
+    }
+
+    // Si aucune correspondance n'est trouvée
+    return { latitude: null, longitude: null };
+  }
+
   // Fetch data from the API
   useEffect(() => {
     async function fetchDevices() {
@@ -39,6 +54,12 @@ export default function Home() {
   const filteredDevices = devices.filter((device) =>
     device.number.toLowerCase().includes(search.toLowerCase())
   );
+
+  // Fonction de redirection vers l'URL du téléphone
+  const handleDeviceClick = (latitude,longitude) => {
+    const url = `https://www.google.com/maps/place/${latitude}+${longitude}/`; // Remplacez ceci par l'URL où vous souhaitez rediriger
+    window.open(url, '_blank');
+  };
 
   return (
     <div
@@ -90,41 +111,54 @@ export default function Home() {
           <p className="text-center text-red-500">{error}</p>
         ) : (
           <ul className="space-y-3">
-            {filteredDevices.map((device) => (
-              <li
-                key={device.number}
-                className={`flex items-center justify-between p-3 rounded-lg shadow-sm border ${
-                  darkMode
-                    ? 'bg-gray-800 border-gray-700'
-                    : 'bg-white border-gray-200'
-                } hover:bg-gray-100 hover:shadow-md transition-all`}
-              >
-                <div className="flex items-center space-x-4">
-                  <MapIcon className="w-6 h-6 text-blue-500" />
-                  <div>
-                    <h2 className="text-xm font-medium">{device.number}</h2>
-                    <p className="text-sm text-gray-700">{device.message}</p>
-                    <p className="text-xs text-gray-500">ip: {device.ipaddress}</p>
-                    <p className="text-xs text-gray-500">identifiant: {device.deviceid}</p>
-                    <p className="text-xs text-gray-500">
-                      {device.createtime}
-                    </p>
+            {filteredDevices.map((device) => {
+              const { latitude, longitude } = parseCoordinates(device.message);
+
+              return (
+                <li
+                  key={device.number}
+                  className={`flex items-center justify-between p-3 rounded-lg shadow-sm border ${
+                    darkMode
+                      ? 'bg-gray-800 border-gray-700'
+                      : 'bg-white border-gray-200'
+                  } hover:bg-gray-100 hover:shadow-md transition-all`}
+                  onClick={() => handleDeviceClick(latitude,longitude)} // Ajout de l'événement de clic
+                >
+                  <div className="flex items-center space-x-4">
+                    <MapIcon className="w-6 h-6 text-blue-500" />
+                    <div>
+                      <h2 className="text-xm font-medium">{device.number}</h2>
+                      <p className="text-sm text-gray-700">{device.message}</p>
+                      <p className="text-xs text-gray-500">
+                        Latitude: {latitude !== null ? latitude : 'Non disponible'}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Longitude: {longitude !== null ? longitude : 'Non disponible'}
+                      </p>
+                      <p className="text-xs text-gray-500">ip: {device.ipaddress}</p>
+                      <p className="text-xs text-gray-500">
+                        identifiant: {device.deviceid}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {device.createtime}
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center space-x-4">
-                  <span
-                    className={`text-xs font-medium px-2 py-1 rounded-full ${
-                      device.severity === 'VERBOSE'
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
-                    }`}
-                  >
-                    {device.severity}
-                  </span>
-                  <ChevronRightIcon className="w-5 h-5 text-gray-400" />
-                </div>
-              </li>
-            ))}
+                  <div className="flex items-center space-x-4">
+                    <span
+                      className={`text-xs font-medium px-2 py-1 rounded-full ${
+                        device.severity === 'VERBOSE'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-red-100 text-red-800'
+                      }`}
+                    >
+                      {device.severity}
+                    </span>
+                    <ChevronRightIcon className="w-5 h-5 text-gray-400" />
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         )}
       </main>
