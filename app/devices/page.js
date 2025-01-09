@@ -185,7 +185,7 @@ export default function Home() {
           darkMode ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-600'
         }`}
       >
-        <p>&copy; 2024 Mobigate. Tous droits réservés.</p>
+        <p>&copy; 2025 Mobigate. Powered by Urban Agence.</p>
       </footer>
     </div>
   );
